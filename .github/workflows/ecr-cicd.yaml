@@ -1,0 +1,29 @@
+name: Upload Docker image to ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Login to AWS ECR
+      run: |
+        aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 730335588229.dkr.ecr.us-east-1.amazonaws.com
+
+
+
+    - name: Build Docker image
+      run: sudo docker build -t my-app:1.2 .
+
+    - name: Tag Docker image
+      run: sudo docker tag my-app:1.2 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
+    
+    - name: Push Docker image to ECR
+      run: docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
