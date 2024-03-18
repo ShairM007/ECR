@@ -19,7 +19,7 @@ jobs:
 
 
 
-    - name: Build Docker image
+    - name: Build Docker images
       run: sudo docker build -t my-app:1.2 .
 
     - name: Tag Docker image
