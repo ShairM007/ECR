@@ -27,4 +27,4 @@ jobs:
       run: sudo docker tag my-app:1.2 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
     
     - name: Push Docker image to ECR
-      run: docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
+      run: sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
