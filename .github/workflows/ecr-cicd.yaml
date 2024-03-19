@@ -29,7 +29,7 @@ jobs:
     - name: Tag Docker image
       run: |
         export COMMIT_HASH=$(git rev-parse --short HEAD)
-        sudo docker tag my-app:${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${COMMIT_HASH}
+        sudo docker tag my-app:${{env.ENVIRONMENT}}-${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${COMMIT_HASH}
 
     - name: Push Docker image to ECR
       run: |
