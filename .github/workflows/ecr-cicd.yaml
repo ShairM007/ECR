@@ -54,7 +54,7 @@ jobs:
         script: |
           COMMIT_HASH=$(echo $GITHUB_SHA | cut -c1-8)
           echo "Commit Hash: $COMMIT_HASH"
-          echo "${{env.ENVIRONMENT}}-${{ github.run_number }}-eee${COMMIT_HASH}"
+          echo "${{env.ENVIRONMENT}}-${{ github.run_number }}-eee${{COMMIT_HASH}}"
           # sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
           # sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 
           # sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 
