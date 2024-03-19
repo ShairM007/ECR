@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT: ${{secrets.ENVIRONMENT }}
-      COMMIT_HASH: ${{ github.sha }} 
+      
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -29,20 +29,20 @@ jobs:
         # echo "Hellooo>>>>"${GITHUB_SHA}
         # echo "SHORT_SHA>>>>>>=`echo ${GITHUB_SHA} | cut -c1-8`" >> "$COMMIT_HASH"
         # COMMIT_HASH=$(${GITHUB_SHA} | cut -c1-8)
-        SHORT_COMMIT_HASH=$(echo $COMMIT_HASH | cut -c1-8)
+        COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
         echo "Hellooo>>>>${COMMIT_HASH}"
-        sudo docker build -t my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_COMMIT_HASH} .
+        sudo docker build -t my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} .
 
     - name: Tag Docker image
       run: |
-        SHORT_COMMIT_HASH=$(echo $COMMIT_HASH | cut -c1-8)
-        sudo docker tag my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
+        COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
+        sudo docker tag my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
     - name: Push Docker image to ECR
       run: |
-        SHORT_COMMIT_HASH=$(echo $COMMIT_HASH | cut -c1-8)
+        COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
         echo "Commit Hash: $COMMIT_HASH"
-        sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_COMMIT_HASH}
+        sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
     - name: Deploy Docker image to EC2 instance
       uses: appleboy/ssh-action@master
@@ -52,10 +52,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
         port: ${{ secrets.SSH_PORT }}
         script: |
-          # COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
-          SHORT_COMMIT_HASH=$(echo $COMMIT_HASH | cut -c1-8)
-          echo "Commit Hash: $SHORT_COMMIT_HASH"
-          # echo "${{env.ENVIRONMENT}}-${{ github.run_number }}-eee$(${SHORT_COMMIT_HASH}"
+          COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
+          echo "Commit Hash: $COMMIT_HASH"
+          echo "${{env.ENVIRONMENT}}-${{ github.run_number }}-eee$(${GITHUB_SHA} | cut -c1-8)"
           # sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
-          # sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_COMMIT_HASH} 
-          # sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_COMMIT_HASH} 
+          # sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 
+          # sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 
