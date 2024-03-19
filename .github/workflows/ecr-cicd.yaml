@@ -37,7 +37,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
         port: ${{ secrets.SSH_PORT }}
         script: |
-          sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
-          sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
           # Login to Docker daemon on EC2 instance
           ssh -i ${{ secrets.SSH_PRIVATE_KEY }} -p ${{ secrets.SSH_PORT }} ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} 'sudo docker login -u AWS -p "$(aws ecr get-login-password --region us-east-1)" 730335588229.dkr.ecr.us-east-1.amazonaws.com'
+          sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
+          sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
