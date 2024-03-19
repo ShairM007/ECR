@@ -23,6 +23,7 @@ jobs:
     - name: Build Docker image
       run: |
         COMMIT_HASH=$(git rev-parse --short HEAD)
+        echo $COMMIT_HASH
         sudo docker build -t my-app:${COMMIT_HASH} .
 
     - name: Tag Docker image
