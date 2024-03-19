@@ -45,8 +45,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
         port: ${{ secrets.SSH_PORT }}
         script: |
-          
-          export COMMIT_HASH=$(git rev-parse --short HEAD)
           sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
           sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{ steps.COMMIT_HASH }}
           sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{ steps.COMMIT_HASH }}
