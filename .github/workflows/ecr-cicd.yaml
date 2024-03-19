@@ -25,18 +25,18 @@ jobs:
       run: |
         export COMMIT_HASH=$(git rev-parse --short HEAD)
         echo $COMMIT_HASH
-        sudo docker build -t my-app:${{env.ENVIRONMENT}}-${COMMIT_HASH} .
+        sudo docker build -t my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} .
 
     - name: Tag Docker image
       run: |
         export COMMIT_HASH=$(git rev-parse --short HEAD)
-        sudo docker tag my-app:${{env.ENVIRONMENT}}-${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${COMMIT_HASH}
+        sudo docker tag my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
     - name: Push Docker image to ECR
       run: |
         export COMMIT_HASH=$(git rev-parse --short HEAD)
         echo "Commit Hash: $COMMIT_HASH"
-        sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${COMMIT_HASH}
+        sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
     - name: Deploy Docker image to EC2 instance
       uses: appleboy/ssh-action@master
