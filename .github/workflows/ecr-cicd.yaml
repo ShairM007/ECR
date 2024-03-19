@@ -25,6 +25,7 @@ jobs:
       run: |
         export COMMIT_HASH=$(git rev-parse --short HEAD)
         echo $COMMIT_HASH
+        echo "Hellooo>>>>"${GITHUB_SHA}
         sudo docker build -t my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} .
 
     - name: Tag Docker image
