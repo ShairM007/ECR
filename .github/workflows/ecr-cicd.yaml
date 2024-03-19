@@ -9,7 +9,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
-      ENVIRONMENT: production
+      ENVIRONMENT: ${{env.ENVIRONMENT}}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
