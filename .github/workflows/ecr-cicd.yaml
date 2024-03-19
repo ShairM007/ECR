@@ -22,18 +22,18 @@ jobs:
 
     - name: Build Docker image
       run: |
-        COMMIT_HASH=$(git rev-parse --short HEAD)
+        COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)
         echo $COMMIT_HASH
         sudo docker build -t my-app:${COMMIT_HASH} .
 
     - name: Tag Docker image
       run: |
-        COMMIT_HASH=$(git rev-parse --short HEAD)
+        COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)
         sudo docker tag my-app:${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
 
     - name: Push Docker image to ECR
       run: |
-        COMMIT_HASH=$(git rev-parse --short HEAD)
+        COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)
         sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
 
     - name: Deploy Docker image to EC2 instance
@@ -44,7 +44,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
         port: ${{ secrets.SSH_PORT }}
         script: |
-          COMMIT_HASH=$(git rev-parse --short HEAD)
+          COMMIT_HASH=$(git log --pretty=format:'%h' -n 1)
           sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
           sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
           sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
