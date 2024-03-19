@@ -20,14 +20,28 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Build Docker images
-      run: sudo docker build -t my-app:1.2 .
+    #- name: Build Docker images
+    #  run: sudo docker build -t my-app:1.2 .
 
+    - name: Build Docker image
+      run: |
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        sudo docker build -t my-app:${COMMIT_HASH} .
+
+    #- name: Tag Docker image
+     # run: sudo docker tag my-app:1.2 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
     - name: Tag Docker image
-      run: sudo docker tag my-app:1.2 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
-    
+      run: |
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        sudo docker tag my-app:${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
+
+    # - name: Push Docker image to ECR
+    # run: sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
+
     - name: Push Docker image to ECR
-      run: sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
+      run: |
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
 
     - name: Deploy Docker images to EC2 instance
       uses: appleboy/ssh-action@master
@@ -37,6 +51,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
         port: ${{ secrets.SSH_PORT }}
         script: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
           sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
-          sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
-          sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
+          sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
+          sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
