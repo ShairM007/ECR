@@ -28,18 +28,18 @@ jobs:
         # echo "Hellooo>>>>"${GITHUB_SHA}
         # echo "SHORT_SHA>>>>>>=`echo ${GITHUB_SHA} | cut -c1-8`" >> "$COMMIT_HASH"
         # COMMIT_HASH=$(${GITHUB_SHA} | cut -c1-8)
-        SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-8)
-        echo "Hellooo>>>>${SHORT_SHA}"
+        COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
+        echo "Hellooo>>>>${COMMIT_HASH}"
         sudo docker build -t my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} .
 
     - name: Tag Docker image
       run: |
-        export COMMIT_HASH=$(git rev-parse --short HEAD)
+        COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
         sudo docker tag my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
     - name: Push Docker image to ECR
       run: |
-        export COMMIT_HASH=$(git rev-parse --short HEAD)
+        COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
         echo "Commit Hash: $COMMIT_HASH"
         sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
@@ -51,6 +51,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
         port: ${{ secrets.SSH_PORT }}
         script: |
+          COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
+          echo "Commit Hash: $COMMIT_HASH"
           sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
-          # sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
-          # sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
+          # sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 
+          # sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 
