@@ -27,7 +27,7 @@ jobs:
         # echo $COMMIT_HASH
         # echo "Hellooo>>>>"${GITHUB_SHA}
         # echo "SHORT_SHA>>>>>>=`echo ${GITHUB_SHA} | cut -c1-8`" >> "$COMMIT_HASH"
-        COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
+        COMMIT_HASH=$(${GITHUB_SHA} | cut -c1-8)
         sudo docker build -t my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} .
 
     - name: Tag Docker image
