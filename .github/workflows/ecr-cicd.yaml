@@ -1,4 +1,4 @@
-name: Deploy Docker image to EC2 instance
+name: Upload Docker image to ECR and Deploy to EC2
 
 on:
   push:
@@ -6,25 +6,34 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
     - name: Login to AWS ECR
       run: |
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 730335588229.dkr.ecr.us-east-1.amazonaws.com
+        aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 730335588229.dkr.ecr.us-east-1.amazonaws.com
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Build and push Docker image to ECR
+    - name: Build Docker image
       run: |
         COMMIT_HASH=$(git rev-parse --short HEAD)
-        docker buildx build -t 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH} .
-        docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
+        sudo docker build -t my-app:${COMMIT_HASH} .
+
+    - name: Tag Docker image
+      run: |
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        sudo docker tag my-app:${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
+
+    - name: Push Docker image to ECR
+      run: |
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
 
     - name: Deploy Docker image to EC2 instance
       uses: appleboy/ssh-action@master
@@ -35,6 +44,6 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           COMMIT_HASH=$(git rev-parse --short HEAD)
-          docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
-          docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
-          docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
+          sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
+          sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
+          sudo docker run -d -p 80:8080 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
