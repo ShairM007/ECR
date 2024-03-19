@@ -1,4 +1,4 @@
-name: Upload Docker image to ECR
+name: Upload Docker image to ECR and Deploy to EC2
 
 on:
   push:
@@ -20,30 +20,22 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    #- name: Build Docker images
-    #  run: sudo docker build -t my-app:1.2 .
-
     - name: Build Docker image
       run: |
         COMMIT_HASH=$(git rev-parse --short HEAD)
         sudo docker build -t my-app:${COMMIT_HASH} .
 
-    #- name: Tag Docker image
-     # run: sudo docker tag my-app:1.2 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
     - name: Tag Docker image
       run: |
         COMMIT_HASH=$(git rev-parse --short HEAD)
         sudo docker tag my-app:${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
-
-    # - name: Push Docker image to ECR
-    # run: sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:1.2
 
     - name: Push Docker image to ECR
       run: |
         COMMIT_HASH=$(git rev-parse --short HEAD)
         sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${COMMIT_HASH}
 
-    - name: Deploy Docker images to EC2 instance
+    - name: Deploy Docker image to EC2 instance
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.EC2_HOST }}  # EC2 instance public IP or DNS name
