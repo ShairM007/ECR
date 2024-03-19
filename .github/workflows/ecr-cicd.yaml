@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       
-    - name: Login to AWS ECR
+    - name: Login to AWS ECRs
       run: |
         aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 730335588229.dkr.ecr.us-east-1.amazonaws.com
       env:
