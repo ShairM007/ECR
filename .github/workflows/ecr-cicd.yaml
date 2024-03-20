@@ -52,5 +52,5 @@
           key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
           port: ${{ secrets.SSH_PORT }}
           script: | 
-            COMMIT_HASH=${echo $GITHUB_SHA} | cut -c1-8
+            echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`"
            
