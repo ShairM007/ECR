@@ -13,3 +13,4 @@ WORKDIR /home/node-app
 RUN npm install
 
 CMD ["node", "/home/node-app/server.js"]
+
