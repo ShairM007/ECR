@@ -32,7 +32,7 @@ jobs:
           COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
           sudo docker tag my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
-      - name: Push Docker image to ECR
+      - name: Push Docker image to ECRs
         run: |
           COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
           sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
