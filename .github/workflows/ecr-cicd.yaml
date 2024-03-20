@@ -60,5 +60,4 @@ jobs:
             echo "SHORT_SHA=`echo $SHA | cut -c1-8`"
             echo "I am $FOO"
             echo "I am $BAR"
-            echo "sha: $SHA"
-            echo "sha: $SHORT_SHA"
+            echo "sha: ${SHORT_SHA}"
