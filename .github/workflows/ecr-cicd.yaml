@@ -52,7 +52,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
         port: ${{ secrets.SSH_PORT }}
         script: |
-          COMMIT_HASH=$(echo $GITHUB_SHA | cut -c1-8)
+          COMMIT_HASH=${echo $GITHUB_SHA} | cut -c1-8
           echo "Commit Hash: $COMMIT_HASH"
           echo "${{env.ENVIRONMENT}}-${{ github.run_number }}-eee${{COMMIT_HASH}}"
           # sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
