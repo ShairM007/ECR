@@ -57,5 +57,6 @@ jobs:
             sudo docker rmi $( sudo docker images -q)
             sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_SHA}
             sudo docker run -d -p 8087:8087 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_SHA}
+            sudo ln -s /etc/nginx/sites-available/my-react-app.conf /etc/nginx/sites-enabled/
             sudo systemctl restart nginx
 
