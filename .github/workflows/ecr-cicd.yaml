@@ -32,7 +32,7 @@ jobs:
           COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
           sudo docker tag my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
-      - name: Push Docker image to ECRs
+      - name: Push Docker image to ECR
         run: |
           COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
           sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
@@ -53,5 +53,5 @@ jobs:
             SHORT_SHA=`echo $SHA | cut -c1-8`
             sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
             sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_SHA}
-            sudo docker run -d -p 8085:8085 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_SHA}
+            sudo docker run -d -p 8087:8087 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_SHA}
 
