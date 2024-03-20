@@ -57,7 +57,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           envs: FOO,BAR,SHA
           script: |
-            echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`"
+            echo "SHORT_SHA=`echo $SHA | cut -c1-8`"
             echo "I am $FOO"
             echo "I am $BAR"
             echo "sha: $SHA"
+            echo "sha: $SHORT_SHA"
