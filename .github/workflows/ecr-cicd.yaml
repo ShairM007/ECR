@@ -51,5 +51,6 @@
           username: ${{ secrets.EC2_USERNAME }}  # SSH username for EC2 instance
           key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key for accessing EC2 instance
           port: ${{ secrets.SSH_PORT }}
-          script: |
-            
+          script: | 
+            COMMIT_HASH=${echo $GITHUB_SHA} | cut -c1-8
+           
