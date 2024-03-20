@@ -46,5 +46,7 @@
 
       - name: Deploy Docker image to EC2 instance
         run: |
-          ssh -i <SSH_PRIVATE_KEY> -p <SSH_PORT> <EC2_USERNAME>@<EC2_HOST>
-          ssh -i ~/.ssh/DemoDockerApp.pem -p 22 ec2-user@ec2.<EC2_HOST>.compute-1.amazonaws.com
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} <SSH_PRIVATE_KEY> -p ${{ secrets.SSH_PORT }} ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}
+
+            
+           
