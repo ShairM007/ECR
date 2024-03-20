@@ -24,13 +24,7 @@ jobs:
 
       - name: Build Docker images
         run: |
-          # export COMMIT_HASH=$(git rev-parse --short HEAD)
-          # echo $COMMIT_HASH
-          # echo "Hellooo>>>>"${GITHUB_SHA}
-          # echo "SHORT_SHA>>>>>>=`echo ${GITHUB_SHA} | cut -c1-8`" >> "$COMMIT_HASH"
-          # COMMIT_HASH=$(${GITHUB_SHA} | cut -c1-8)
           COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
-          echo "Hellooo>>>>${COMMIT_HASH}"
           sudo docker build -t my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH} .
 
       - name: Tag Docker image
@@ -41,7 +35,6 @@ jobs:
       - name: Push Docker image to ECR
         run: |
           COMMIT_HASH=$(echo ${GITHUB_SHA} | cut -c1-8)
-          echo "Commit Hash: $COMMIT_HASH"
           sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
       - name: Deploy Docker image to EC2 instance
@@ -58,9 +51,6 @@ jobs:
           envs: FOO,BAR,SHA
           script: |
             SHORT_SHA=`echo $SHA | cut -c1-8`
-            echo "I am $FOO"
-            echo "I am $BAR"
-            echo "sha: ${SHORT_SHA}"
             sudo docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) 730335588229.dkr.ecr.us-east-1.amazonaws.com
             sudo docker pull 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_SHA}
             sudo docker run -d -p 8085:8085 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${SHORT_SHA}
