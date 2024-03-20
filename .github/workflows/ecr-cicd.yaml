@@ -44,7 +44,7 @@
           echo "Commit Hash: $COMMIT_HASH"
           sudo docker push 730335588229.dkr.ecr.us-east-1.amazonaws.com/my-app:${{env.ENVIRONMENT}}-${{ github.run_number }}-${COMMIT_HASH}
 
-      - name: Deploy Docker image to EC2 instance
+      - name: Deploy Docker image to EC2 instance aded
         run: |
           ssh -i ${{ secrets.SSH_PRIVATE_KEY }} -p ${{ secrets.SSH_PORT }} ${{ secrets.EC2_USERNAME }}@ec2-${{ secrets.EC2_HOST }}.compute-1.amazonaws.com
 
